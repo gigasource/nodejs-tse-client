@@ -22,15 +22,16 @@ const tseClient = new TseClient(deviceHost);
       clientId,
     });
 
-    console.log('Start transaction 1');
-    const {transactionNumber: transactionNumber1} = await tseClient.startTransaction({
+    console.log('\nStart transaction 1');
+    const transactionData1 = await tseClient.startTransaction({
       clientId,
       transactionData: {
         randomNumber: Math.random(),
       },
       processType,
     });
-    console.log(`transactionNumber1: ${transactionNumber1}`);
+    const transactionNumber1 = transactionData1.transactionNumber;
+    console.log(`start: ${JSON.stringify(transactionData1)}`);
 
     console.log('Update transaction 1');
     const updatedTransaction1 = await tseClient.updateTransaction({
@@ -41,7 +42,7 @@ const tseClient = new TseClient(deviceHost);
       },
       processType,
     });
-    console.log(`updatedTransaction1: ${JSON.stringify(updatedTransaction1)}`);
+    console.log(`update: ${JSON.stringify(updatedTransaction1)}`);
 
     console.log('Finish transaction 1');
     const finishedTransaction1 = await tseClient.finishTransaction({
@@ -49,17 +50,18 @@ const tseClient = new TseClient(deviceHost);
       transactionNumber: transactionNumber1,
       processType,
     });
-    console.log(`finishedTransaction1: ${JSON.stringify(finishedTransaction1)}`);
+    console.log(`finish: ${JSON.stringify(finishedTransaction1)}`);
 
-    console.log('Start transaction 2');
-    const {transactionNumber: transactionNumber2} = await tseClient.startTransaction({
+    console.log('\nStart transaction 2');
+    const transactionData2 = await tseClient.startTransaction({
       clientId,
       transactionData: {
         randomNumber: Math.random(),
       },
       processType,
     });
-    console.log(`transactionNumber2: ${transactionNumber2}`);
+    const transactionNumber2 = transactionData2.transactionNumber;
+    console.log(`start: ${JSON.stringify(transactionData2)}`);
 
     console.log('Finish transaction 2');
     const finishedTransaction2 = await tseClient.finishTransaction({
@@ -67,7 +69,7 @@ const tseClient = new TseClient(deviceHost);
       transactionNumber: transactionNumber2,
       processType,
     });
-    console.log(`finishedTransaction2: ${JSON.stringify(finishedTransaction2)}`);
+    console.log(`finish: ${JSON.stringify(finishedTransaction2)}`);
 
   } catch (e) {
     console.error(e);
