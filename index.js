@@ -67,26 +67,27 @@ class TseClient {
     }
   }
 
-  async startTransaction({clientId, transactionData}) {
-    if (!clientId || !transactionData) {
+  async startTransaction({clientId, transactionData, processType}) {
+    if (!clientId || !transactionData || !processType) {
       throw new Error('Missing parameters');
     }
 
     if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
 
     try {
-      const {data: {transactionNumber}} = await axios.post(`${this.deviceHost}/start-tse-transaction`, {
+      const {data} = await axios.post(`${this.deviceHost}/start-tse-transaction`, {
         clientId,
         transactionData,
+        processType,
       });
-      return +transactionNumber;
+      return data;
     } catch (e) {
       throw new Error(e.response.data);
     }
   }
 
-  async updateTransaction({clientId, transactionNumber, transactionData}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData) {
+  async updateTransaction({clientId, transactionNumber, transactionData, processType}) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData || !processType) {
       throw new Error('Missing parameters');
     }
 
@@ -97,6 +98,7 @@ class TseClient {
         clientId,
         transactionNumber,
         transactionData,
+        processType,
       });
       return data;
     } catch (e) {
@@ -104,8 +106,8 @@ class TseClient {
     }
   }
 
-  async finishTransaction({clientId, transactionNumber}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined)) {
+  async finishTransaction({clientId, transactionNumber, processType}) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !processType) {
       throw new Error('Missing parameters');
     }
 
@@ -113,6 +115,7 @@ class TseClient {
       const {data} = await axios.post(`${this.deviceHost}/finish-tse-transaction`, {
         clientId,
         transactionNumber,
+        processType,
       });
       return data;
     } catch (e) {
@@ -140,7 +143,6 @@ class TseClientMock {
   constructor() {
     this.currentTransactionId = 0;
   }
-
 
   async selfTest(clientId) {
     if (!clientId) {
@@ -174,18 +176,8 @@ class TseClientMock {
 
   }
 
-  async startTransaction({clientId, transactionData}) {
-    if (!clientId || !transactionData) {
-      throw new Error('Missing parameters');
-    }
-
-    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
-
-    return this.currentTransactionId++;
-  }
-
-  async updateTransaction({clientId, transactionNumber, transactionData}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData) {
+  async startTransaction({clientId, transactionData, processType}) {
+    if (!clientId || !transactionData || !processType) {
       throw new Error('Missing parameters');
     }
 
@@ -194,16 +186,38 @@ class TseClientMock {
 
     return {
       logTime: new Date().getTime(),
+      serialNumber:"[B@d539847",
+      signature:"[B@2e7a874",
       signatureCounter: Math.round(Math.random() * 100000),
-      transactionNumber: +transactionNumber,
+      transactionNumber: this.currentTransactionId++,
       logMessageLength: logMessage.length,
       processDataLength: logMessage.length + Math.round(Math.random() * 100),
       logMessage,
     }
   }
 
-  async finishTransaction({clientId, transactionNumber}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined)) {
+  async updateTransaction({clientId, transactionNumber, transactionData, processType}) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData || !processType) {
+      throw new Error('Missing parameters');
+    }
+
+    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
+    const logMessage = uuidv4();
+
+    return {
+      logTime: new Date().getTime(),
+      serialNumber:"[B@19df612",
+      signature:"[B@52771e3",
+      signatureCounter: Math.round(Math.random() * 100000),
+      transactionNumber,
+      logMessageLength: logMessage.length,
+      processDataLength: logMessage.length + Math.round(Math.random() * 100),
+      logMessage,
+    }
+  }
+
+  async finishTransaction({clientId, transactionNumber, processType}) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !processType) {
       throw new Error('Missing parameters');
     }
 
@@ -211,6 +225,8 @@ class TseClientMock {
 
     return {
       logTime: new Date().getTime(),
+      serialNumber:"[B@db920c",
+      signature:"[B@5450755",
       signatureCounter: Math.round(Math.random() * 100000),
       transactionNumber: +transactionNumber,
       logMessageLength: logMessage.length,

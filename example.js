@@ -7,13 +7,14 @@ const tseClient = new TseClient(deviceHost);
 
 (async () => {
   const clientId = 'SWISSBIT';
+  const processType = 'exampleProcess';
 
   try {
     // use this function to factory reset the TSE device
     // await tseClient.factoryReset();
 
     console.log('Initializing...');
-    tseClient.fastInit({
+    await tseClient.fastInit({
       credentialSeed: 'SwissbitSwissbit',
       adminPuk: '123456',
       adminPin: '12345',
@@ -22,11 +23,12 @@ const tseClient = new TseClient(deviceHost);
     });
 
     console.log('Start transaction 1');
-    const transactionNumber1 = await tseClient.startTransaction({
+    const {transactionNumber: transactionNumber1} = await tseClient.startTransaction({
       clientId,
       transactionData: {
         randomNumber: Math.random(),
       },
+      processType,
     });
     console.log(`transactionNumber1: ${transactionNumber1}`);
 
@@ -37,6 +39,7 @@ const tseClient = new TseClient(deviceHost);
       transactionData: {
         randomNumber: Math.random(),
       },
+      processType,
     });
     console.log(`updatedTransaction1: ${JSON.stringify(updatedTransaction1)}`);
 
@@ -44,15 +47,17 @@ const tseClient = new TseClient(deviceHost);
     const finishedTransaction1 = await tseClient.finishTransaction({
       clientId,
       transactionNumber: transactionNumber1,
+      processType,
     });
     console.log(`finishedTransaction1: ${JSON.stringify(finishedTransaction1)}`);
 
     console.log('Start transaction 2');
-    const transactionNumber2 = await tseClient.startTransaction({
+    const {transactionNumber: transactionNumber2} = await tseClient.startTransaction({
       clientId,
       transactionData: {
         randomNumber: Math.random(),
       },
+      processType,
     });
     console.log(`transactionNumber2: ${transactionNumber2}`);
 
@@ -60,6 +65,7 @@ const tseClient = new TseClient(deviceHost);
     const finishedTransaction2 = await tseClient.finishTransaction({
       clientId,
       transactionNumber: transactionNumber2,
+      processType,
     });
     console.log(`finishedTransaction2: ${JSON.stringify(finishedTransaction2)}`);
 
