@@ -68,11 +68,9 @@ class TseClient {
   }
 
   async startTransaction({clientId, transactionData, processType}) {
-    if (!clientId || !transactionData || !processType) {
+    if (!clientId || !processType) {
       throw new Error('Missing parameters');
     }
-
-    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
 
     try {
       const {data} = await axios.post(`${this.deviceHost}/start-tse-transaction`, {
@@ -87,11 +85,9 @@ class TseClient {
   }
 
   async updateTransaction({clientId, transactionNumber, transactionData, processType}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData || !processType) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !processType) {
       throw new Error('Missing parameters');
     }
-
-    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
 
     try {
       const {data} = await axios.post(`${this.deviceHost}/update-tse-transaction`, {
@@ -177,11 +173,10 @@ class TseClientMock {
   }
 
   async startTransaction({clientId, transactionData, processType}) {
-    if (!clientId || !transactionData || !processType) {
+    if (!clientId || !processType) {
       throw new Error('Missing parameters');
     }
 
-    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
     const logMessage = uuidv4();
 
     return {
@@ -197,11 +192,10 @@ class TseClientMock {
   }
 
   async updateTransaction({clientId, transactionNumber, transactionData, processType}) {
-    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !transactionData || !processType) {
+    if (!clientId || (transactionNumber === null || transactionNumber === undefined) || !processType) {
       throw new Error('Missing parameters');
     }
 
-    if (typeof transactionData !== 'object') throw new Error('transactionData must be an object');
     const logMessage = uuidv4();
 
     return {
