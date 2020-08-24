@@ -5,28 +5,53 @@ const deviceHost = 'http://192.168.10.74:5000';
 // To use mock mode, set process.env.mockMode = 'true' (env vars are Strings)
 const tseClient = new TseClient(deviceHost);
 
+function generateLongString() {
+  let s = '';
+
+  for (let i = 0; i < 100; i++) {
+    s += Math.random().toString();
+  }
+
+  return s;
+}
+
 (async () => {
   const clientId = 'SWISSBIT';
   const processType = 'exampleProcess';
+  const credentialSeed = 'SwissbitSwissbit';
+  const adminPuk = '123456';
+  const adminPin = '12345';
+  const timeAdminPin = '12345';
 
   try {
+    // need to call init first
+    await tseClient.init();
+
     // use this function to factory reset the TSE device
     // await tseClient.factoryReset();
 
     console.log('Initializing...');
-    await tseClient.fastInit({
-      credentialSeed: 'SwissbitSwissbit',
-      adminPuk: '123456',
-      adminPin: '12345',
-      timeAdminPin: '12345',
-      clientId,
-    });
+    const setupRequired = await tseClient.selfTest(clientId);
+    if (setupRequired) await tseClient.setup({credentialSeed, adminPuk, adminPin, timeAdminPin, clientId});
+    await tseClient.loginAdminUser(adminPin);
+    await tseClient.updateTime();
+
+    const publicKey = await tseClient.getTsePublicKey();
+    const serialNumber = await tseClient.getTseSerialNumber();
+    const signatureAlgorithm = await tseClient.getTseSignatureAlgorithm();
+    const certificateExpDate = await tseClient.getTseCertificateExpDate();
+    const logMessageCertificate = await tseClient.getLogMessageCertificate();
+    console.log(`public key = ${publicKey}`);
+    console.log(`serial number = ${serialNumber}`);
+    console.log(`signature algorithm = ${signatureAlgorithm}`);
+    console.log(`certificate exp date = ${certificateExpDate}`);
+    console.log(`log message certificate = ${logMessageCertificate}`);
 
     console.log('\nStart transaction 1');
     const transactionData1 = await tseClient.startTransaction({
       clientId,
       transactionData: {
-        randomNumber: Math.random(),
+        randomString: generateLongString(),
       },
       processType,
     });
@@ -38,7 +63,7 @@ const tseClient = new TseClient(deviceHost);
       clientId,
       transactionNumber: transactionNumber1,
       transactionData: {
-        randomNumber: Math.random(),
+        randomString: generateLongString(),
       },
       processType,
     });
@@ -56,7 +81,7 @@ const tseClient = new TseClient(deviceHost);
     const transactionData2 = await tseClient.startTransaction({
       clientId,
       transactionData: {
-        randomNumber: Math.random(),
+        randomString: generateLongString(),
       },
       processType,
     });
