@@ -90,7 +90,7 @@ class TseClient {
     }
 
     try {
-      const {data} = await axios.put(`${this.deviceHost}/update-tse-transaction`, {
+      const {data} = await axios.post(`${this.deviceHost}/update-tse-transaction`, {
         clientId,
         transactionNumber,
         transactionData,
@@ -108,7 +108,7 @@ class TseClient {
     }
 
     try {
-      const {data} = await axios.put(`${this.deviceHost}/finish-tse-transaction`, {
+      const {data} = await axios.post(`${this.deviceHost}/finish-tse-transaction`, {
         clientId,
         transactionNumber,
         processType,
