@@ -96,6 +96,16 @@ function generateLongString() {
     });
     console.log(`finish: ${JSON.stringify(finishedTransaction2)}`);
 
+    console.log('\nStart and finish transaction 3');
+    const finishedTransaction3 = await tseClient.startAndFinishTransaction({
+      clientId,
+      transactionData: {
+        randomString: generateLongString(),
+      },
+      processType,
+    });
+    console.log(`finish: ${JSON.stringify(finishedTransaction3)}`);
+
   } catch (e) {
     console.error(e);
   }
