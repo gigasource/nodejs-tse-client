@@ -169,7 +169,7 @@ class TseClient {
                    adminPuk,
                    timeAdminPin,
                  }) {
-    await this.init();
+    //await this.init();
     const setupRequired = await this.selfTest(clientId);
     if (setupRequired) await this.setup({credentialSeed, adminPuk, adminPin, timeAdminPin, clientId});
     await this.loginAdminUser(adminPin);
